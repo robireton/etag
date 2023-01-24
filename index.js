@@ -1,32 +1,13 @@
-/*!
- * etag
- * Copyright(c) 2014-2016 Douglas Christopher Wilson
- * MIT Licensed
- */
-
-'use strict'
-
-/**
- * Module exports.
- * @public
- */
-
-module.exports = etag
-
-/**
- * Module dependencies.
- * @private
- */
-
-var crypto = require('crypto')
-var Stats = require('fs').Stats
+import crypto from 'node:crypto'
+import { Stats } from 'node:fs'
 
 /**
  * Module variables.
  * @private
  */
 
-var toString = Object.prototype.toString
+const toString = Object.prototype.toString
+const stattag = stat => `"${stat.size.toString(16)}-${stat.mtime.getTime().toString(16)}"`
 
 /**
  * Generate an entity tag.
@@ -43,14 +24,14 @@ function entitytag (entity) {
   }
 
   // compute hash of entity
-  var hash = crypto
+  const hash = crypto
     .createHash('sha1')
     .update(entity, 'utf8')
     .digest('base64')
     .substring(0, 27)
 
   // compute length of entity
-  var len = typeof entity === 'string'
+  const len = typeof entity === 'string'
     ? Buffer.byteLength(entity, 'utf8')
     : entity.length
 
@@ -67,14 +48,14 @@ function entitytag (entity) {
  * @public
  */
 
-function etag (entity, options) {
+export default function etag (entity, options) {
   if (entity == null) {
     throw new TypeError('argument entity is required')
   }
 
   // support fs.Stats object
-  var isStats = isstats(entity)
-  var weak = options && typeof options.weak === 'boolean'
+  const isStats = isstats(entity)
+  const weak = options && typeof options.weak === 'boolean'
     ? options.weak
     : isStats
 
@@ -84,12 +65,12 @@ function etag (entity, options) {
   }
 
   // generate entity tag
-  var tag = isStats
+  const tag = isStats
     ? stattag(entity)
     : entitytag(entity)
 
   return weak
-    ? 'W/' + tag
+    ? `W/${tag}`
     : tag
 }
 
@@ -113,19 +94,4 @@ function isstats (obj) {
     'mtime' in obj && toString.call(obj.mtime) === '[object Date]' &&
     'ino' in obj && typeof obj.ino === 'number' &&
     'size' in obj && typeof obj.size === 'number'
-}
-
-/**
- * Generate a tag for a stat.
- *
- * @param {object} stat
- * @return {string}
- * @private
- */
-
-function stattag (stat) {
-  var mtime = stat.mtime.getTime().toString(16)
-  var size = stat.size.toString(16)
-
-  return '"' + size + '-' + mtime + '"'
 }
