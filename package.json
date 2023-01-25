@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "etag",
+  "name": "@robireton/etag",
   "description": "Create simple HTTP ETags",
   "version": "2.0.0",
   "main": "index.js",

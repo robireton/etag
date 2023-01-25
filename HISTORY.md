@@ -2,6 +2,8 @@
 ==================
 
   * rewrite as ECMAScript Module
+  * use experimental node test runner
+  * no longer accommodates ersatz Stats objects
 
 1.8.1 / 2017-09-12
 ==================
